@@ -58,6 +58,7 @@ class DayOneTests: XCTestCase {
         }
     }
 }
+
 class DayOneInverseCaptcha: ChallengeAcceptable, PathLoadable {
     var resourceName: String = "day-1-inverse-captcha"
     var type: String? = "txt"
