@@ -5,11 +5,11 @@ import XCTest
 
 typealias Grid = [[Int]]
 
-var partOne: ((Grid) -> Int) = { grid -> Int in
+let partOne: ((Grid) -> Int) = { grid -> Int in
     var checkSumTotal = 0
     grid.forEach { row in
         guard let firstColumnValue = row.first else { return }
-        var minValue: Int = firstColumnValue //5
+        var minValue: Int = firstColumnValue
         var maxValue = minValue
         var maxDifference: Int = 0
         row.forEach { currentValue in
@@ -22,17 +22,18 @@ var partOne: ((Grid) -> Int) = { grid -> Int in
     return checkSumTotal
 }
 
-var partTwo: ((Grid) -> Int) = { grid -> Int in
+let partTwo: ((Grid) -> Int) = { grid -> Int in
     var checkSumTotal = 0
     var carryForward = 0
     grid.forEach { row in
         for i in 0..<row.count {
-            for j in 0..<row.count { //row.dropFirst().forEach { jValue in
+            for j in 0..<row.count {
                 guard i != j else { continue }
                 let maxValue = max(row[i], row[j])
                 let smallValue = min(row[i], row[j])
                 guard maxValue % smallValue == 0 else { continue }
                 carryForward = maxValue/smallValue
+                break
             }
         }
         checkSumTotal += carryForward

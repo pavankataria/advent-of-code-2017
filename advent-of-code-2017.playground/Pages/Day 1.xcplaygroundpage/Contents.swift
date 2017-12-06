@@ -1,107 +1,33 @@
 //: Playground - noun: a place where people can play
 
 import UIKit
-import PlaygroundSupport
+import Foundation
 import XCTest
+import CoreLocation
 
+let input = content("input")
 
-class DayOneTests: XCTestCase {
-    var challenge: ChallengeAcceptable!
-    
-    func testPartOneResultCases(){
-        let challenge = DayOneInverseCaptcha()
-        challenge.input = "1122"
-        challenge.processPartOne {
-            XCTAssertEqual("3", $0)
-        }
-        
-        challenge.input = "1111"
-        challenge.processPartOne {
-            XCTAssertEqual("4", $0)
-        }
-
-        challenge.input = "1234"
-        challenge.processPartOne {
-            XCTAssertEqual("0", $0)
-        }
-        
-        challenge.input = "91212129"
-        challenge.processPartOne {
-            XCTAssertEqual("9", $0)
-        }
+var processReverseCaptchaSum: ((String, Int) -> Int) = {
+    var sum: Int = 0
+    var captcha = $0.map(String.init)
+    print(captcha)
+    for (index, character) in $0.enumerated() {
+        guard character == captcha[(index + $1) % captcha.count] else { continue }
+        sum += Int(character)!
     }
-    
-    func testPartTwoResultCases(){
-        let challenge = DayOneInverseCaptcha()
-        challenge.input = "1212"
-        challenge.processPartTwo {
-            XCTAssertEqual("6", $0)
-        }
-        
-        challenge.input = "1221"
-        challenge.processPartTwo {
-            XCTAssertEqual("0", $0)
-        }
-        
-        challenge.input = "123425"
-        challenge.processPartTwo {
-            XCTAssertEqual("4", $0)
-        }
-        
-        challenge.input = "123123"
-        challenge.processPartTwo {
-            XCTAssertEqual("12", $0)
-        }
-        challenge.input = "12131415"
-        challenge.processPartTwo {
-            XCTAssertEqual("4", $0)
-        }
-    }
+    return sum
 }
 
-class DayOneInverseCaptcha: ChallengeAcceptable, PathLoadable {
-    var resourceName: String = "day-1-inverse-captcha"
-    var type: String? = "txt"
-    
-    var input: String = ""
-    var didComplete: (() -> Void)?
-    
-    init(){
-        self.processInput()
-    }
-    func processInput(){
-        let data = getInput()
-        let input = String(data: data, encoding: .utf8)!
-        self.input = input.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
-    
-    func processPartOne(_ onComplete: ((String) -> Void)) {
-        let sum = self.processReverseCaptchaSum(skipCount: 1)
-        onComplete("\(sum)")
-    }
-    
-    func processPartTwo(_ onComplete: ((String) -> Void)) {
-        let sum = self.processReverseCaptchaSum(skipCount: self.input.count/2)
-        onComplete("\(sum)")
-    }
-    private func processReverseCaptchaSum(skipCount: Int) -> Int {
-        var sum: Int = 0
-        var input: [String] = self.input.map(String.init)
-        for (index, character) in input.enumerated() {
-            guard character == input[(index + skipCount) % input.count] else { continue }
-            sum += Int(character)!
-        }
-        return sum
-    }
+var p1: ((String) -> Int) = {
+    return processReverseCaptchaSum($0, 1)
+}
+var p2: ((String) -> Int) = {
+    return processReverseCaptchaSum($0, $0.count/2)
 }
 
-DayOneTests.defaultTestSuite.run()
-let dayOnePartOne = DayOneInverseCaptcha()
-dayOnePartOne.processPartOne {
-    print("answer \($0)")
-}
-dayOnePartOne.processPartTwo {
-    print("answer \($0)")
-}
+let answerToPartOne = p1(input)
+let answerToPartTwo = p2(input)
 
+print("Answer to part one: \(answerToPartOne)")
+print("Answer to part two: \(answerToPartTwo)")
 
